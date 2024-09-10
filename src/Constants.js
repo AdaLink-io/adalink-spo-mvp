@@ -19,6 +19,7 @@ case 1:
   SCRIPT_UTXO_REFERENCE = "96a4b124fa488533b832f336b77ab232a6223c6769147139ac8bdbb712a8cbd8" // always #0
   RSO_ADDRESS = "addr1qx3q025xd9ugypwr4vad80t2snvyaq2ym943wpcugcw0992xnhwkwn5fkw3v0sj8u65glsql7sjqwwr7379rxszatsysh6a39k";
 break;
+default:
 }
 export { NETWORK,WEBSITE, SCRIPT_ADDRESS, FEE_ADDRESS, SCRIPT_UTXO_REFERENCE,RSO_ADDRESS };
 
@@ -99,16 +100,16 @@ export function removePrettyFormat(prettyNumberString){
       
       output = wholeNumber+'.'+fractions;
     }else{
-      output = output;
+      
     }
     return output; 
 }
 
 export const handlePrettyNumberInputChange = (elementId) => {
     
-  if(document.getElementById(elementId).value.slice(-1)!="." && document.getElementById(elementId).value.split(".")[1]?.slice(-1)!="0"){
+  if(document.getElementById(elementId).value.slice(-1)!=="." && document.getElementById(elementId).value.split(".")[1]?.slice(-1)!=="0"){
 
-    if(document.getElementById(elementId).value!="" ){
+    if(document.getElementById(elementId).value!=="" ){
         document.getElementById(elementId).value=displayNumberInPrettyFormat(removePrettyFormat(document.getElementById(elementId).value));
         
     }

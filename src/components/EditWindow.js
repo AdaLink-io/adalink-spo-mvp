@@ -1,9 +1,8 @@
 /* global BigInt */
-import React, { useEffect, useState } from 'react';
-import {Constr, Data, toHex,fromHex} from 'lucid-cardano';
+import React from 'react';
+
 import './SignUpWindow.css';
-import downArrow from '../assets/images/down-arrow.svg';
-import {SCRIPT_ADDRESS,stringToHex,getCurrentEpochNumber,displayNumberInPrettyFormat,removePrettyFormat} from '../Constants';
+
 
 
 const EditWindow = ({ onClose,parameterToBeEdited,accountInfo,setAccountInfo,setMessageWindowContent,setMessageWindowButtonText,setShowMessageWindow}) => {
@@ -53,7 +52,7 @@ const EditWindow = ({ onClose,parameterToBeEdited,accountInfo,setAccountInfo,set
     let paymentAddress = accountInfo["WalletAddress"];
     let stakeAddress = accountInfo["StakeAddress"];
     let userType = "Affiliate";
-    if (accountInfo["UniqueID"]==undefined)
+    if (accountInfo["UniqueID"]===undefined)
       userType = "SPO";
 
     let key=paymentAddress.substring(11,12)+paymentAddress.substring(22,23)+paymentAddress.substring(33,34)+paymentAddress.substring(44,45);
@@ -62,7 +61,7 @@ const EditWindow = ({ onClose,parameterToBeEdited,accountInfo,setAccountInfo,set
     let response = await fetch("https://adalink.io/api/edit-user-parameter-adalink.php?stakeAddress="+stakeAddress+'&parameter='+parameterToBeEdited.replace(/\s/g, "")+'&value='+parameterNewValue+'&type='+userType+'&key='+key,{cache:'reload'});
     let result = await response.text();
     //console.log(result);
-    if (result == "Record updated successfully"){
+    if (result === "Record updated successfully"){
       accountInfo[parameterToBeEdited.replace(/\s/g, "")]=parameterNewValue;
       setMessageWindowContent(parameterToBeEdited+" edited successfully.");
       setMessageWindowButtonText('OK');

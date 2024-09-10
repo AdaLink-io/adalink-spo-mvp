@@ -34,6 +34,7 @@ switch(WEBSITE){
       "Mainnet",
     );
   break;
+  default:
 }
 
 
@@ -89,6 +90,7 @@ function App() {
           lastConnectedWalletAPI = await window.cardano.flint.enable();
           setWalletName('Flint');
         break;
+        default:
       }
       
       setWalletAPI(lastConnectedWalletAPI);
@@ -108,7 +110,7 @@ function App() {
     let response = await fetch('https://adalink.io/api/get-account-info.php?stakeAddress='+stakeAddress,{cache:'reload'}); 
     let accountInfo = JSON.parse(await response.text());
 
-    if (accountInfo!=null){
+    if (accountInfo!==null){
       setAccountInfo(accountInfo);
       setLoggedIn(true);
       setShowMessageWindow(false);
