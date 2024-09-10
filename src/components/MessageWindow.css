@@ -10,7 +10,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 2; /* Place the menu above everything else */
+    z-index: 3; /* Place the menu above everything else */
   }
   
   .message-window {
@@ -75,6 +75,7 @@
     cursor: pointer;
     min-width: 60px; /* Set the width of the button to 100% */
     margin-top: 1rem;;
+    
   }
   
   .message-window-button:hover {

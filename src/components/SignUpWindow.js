@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './SignUpWindow.css';
 import downArrow from '../assets/images/down-arrow.svg';
 import uploadImg from '../assets/images/upload.png';
-
+import infoLogo from "../assets/images/q-mark.png";
 import { NETWORK } from '../Constants';
 
 
@@ -78,20 +78,22 @@ const SignUpWindow = ({ walletAPI,walletName,walletIcon,lucid,openWalletMenu,onC
       return;
     }    
 
-    if(poolID.substring(0,4)!="pool"){
-      setMessageWindowContent("Pool ID must start with \"pool1...\".");
-      setMessageWindowButtonText('OK');
-      setShowMessageWindow(true);
-      return;
-    }
 
-    if(userType=="SPO")
+
+    if(userType=="SPO"){
       if(await isAccountRegistered(userType,"poolID",poolID)){
         setMessageWindowContent("Can not create account. This pool ID is already associated with an account.");
         setMessageWindowButtonText('OK');
         setShowMessageWindow(true);
         return;
       }
+      if(poolID.substring(0,4)!="pool"){
+        setMessageWindowContent("Pool ID must start with \"pool1...\".");
+        setMessageWindowButtonText('OK');
+        setShowMessageWindow(true);
+        return;
+      }
+    }
 
     if(await isAccountRegistered(userType,"stakeAddress",stakeAddress)){
       setMessageWindowContent("Can not create account. This wallet is already associated with an account.");
@@ -175,7 +177,10 @@ const SignUpWindow = ({ walletAPI,walletName,walletIcon,lucid,openWalletMenu,onC
         <div style={{display:"flex",gap:"30px"}}>
           <div className='sign-up-text-fields-area'>
             <div className='sign-up-text-field'>
-              <div className='sign-up-text-field-title'>User Type:</div>
+              <div className='sign-up-text-field-title'>User Type
+              <a className="qMark"><img src={infoLogo} width="15px" height={"15px"} /><p className="tooltiptext slide-in-fwd-center">{userType=="SPO"?"SPO stands for Stake Pool Operator.":"Affiliate is an influencer who works on bringing stake to SPOs. For more information read about \"Affiliate Marketing\" concept."}</p></a>
+              :
+              </div>
               <div className='sign-up-text-field-input' >
                 <select id="userType" style={{height:"25px"}} onChange={() => setUserType(document.getElementById("userType").value)}>
                   <option value={"SPO"}>SPO</option>

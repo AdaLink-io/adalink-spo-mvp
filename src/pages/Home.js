@@ -228,7 +228,7 @@ function Home({isLoggedIn,ipsList,setIPsList,accountInfo,setImportantIPsList,wal
     return(
       <div className={"slide-in-fwd-center"} id="spos-list">
           {htmlBlocks.every(function (block) {return block === ''})?
-          <div className="" style={{marginLeft:"5px",color:"var(--major-color)"}}>There is no available incentive programs.</div>
+          <div className="" style={{marginLeft:"5px",color:"var(--major-color)"}}>There are no available incentive programs.</div>
           :
           htmlBlocks}
       </div>

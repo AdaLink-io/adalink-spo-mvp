@@ -37,6 +37,10 @@
   background: white;
 }
 
+.spo-pfp-in-spo-header img{
+  max-height: 100px;
+}
+
 .spo-parameter-area{
   display: flex;
   gap:5px;

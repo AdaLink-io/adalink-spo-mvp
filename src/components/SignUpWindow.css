@@ -10,7 +10,7 @@
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
     min-width: 260px;
     text-align: center;
-    
+    z-index: 6;
   }
   
 .signup-menu h3{

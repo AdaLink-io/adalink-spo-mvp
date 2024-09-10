@@ -167,6 +167,35 @@
     text-align: center;
   }
 
+  .qMark{
+    color: white;
+    font-size:2vh;
+    vertical-align: super;
+}
+
+.qMark .tooltiptext {
+    display:none;
+    background-color: var(--main-borderColor);
+    color:  black;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #323535;
+    border-width: 1px;
+    font-size:2vh;
+    /* Position the tooltip */
+    position: absolute;
+    left: inherit;
+    padding: 10px;
+    max-width: 220px;
+    
+    
+  }
+
+.qMark:hover .tooltiptext {
+    display: block;
+    
+  }
+
   @media screen and (max-width: 1000px) {
     .home .container{
       max-width: 900px;

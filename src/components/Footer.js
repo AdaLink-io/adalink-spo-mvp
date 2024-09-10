@@ -7,7 +7,7 @@ function Footer() {
     <footer className='footer'>
       <div className="container">
         <div className="footer-content">
-          <p>&copy; {new Date().getFullYear()} AdaLink. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} AdaLink. All rights reserved. <e style={{color:"transparent"}}>Signed</e></p>
           <div className="footer-links" style={{display:"none"}}>
             <a href="/terms">Terms of Service</a>
             <a href="/privacy">Privacy Policy</a>
