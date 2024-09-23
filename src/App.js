@@ -57,6 +57,7 @@ function App() {
   
   const [accountInfo,setAccountInfo] = useState({StakeAddress:"0"});
   const [importantIPsList,setImportantIPsList]=useState();
+  const [importantBRsList,setImportantBRsList]=useState();
   
   const [showMessageWindow,setShowMessageWindow] = useState(false);
   const [messageWindowContent,setMessageWindowContent] = useState('');
@@ -118,6 +119,9 @@ function App() {
         response = await fetch("https://adalink.io/api/get-affiliate-subscribed-ip-list.php?aID="+accountInfo['UniqueID'],{cache:"reload"});
       }else{
         response = await fetch("https://adalink.io/api/get-spo-ip-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
+        let bonusRequestResponse = await fetch("https://adalink.io/api/get-spo-br-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
+        let importantBRsList = JSON.parse(await bonusRequestResponse.text());
+        setImportantBRsList(importantBRsList);
       }
       let importantIPsList = JSON.parse(await response.text());
       setImportantIPsList(importantIPsList);
@@ -143,6 +147,7 @@ function App() {
           setAccountInfo={setAccountInfo}
           accountInfo={accountInfo}
           setImportantIPsList={setImportantIPsList}
+          setImportantBRsList={setImportantBRsList}
           walletAPI={walletAPI} 
           setWalletAPI={setWalletAPI} 
           walletName={walletName} 
@@ -197,6 +202,8 @@ function App() {
               <ProfilePage
                 accountInfo={accountInfo}
                 importantIPsList={importantIPsList}
+                setImportantBRsList={setImportantBRsList}
+                importantBRsList={importantBRsList}
                 setAccountInfo={setAccountInfo}
                 setMessageWindowContent={setMessageWindowContent}
                 setMessageWindowButtonText={setMessageWindowButtonText}

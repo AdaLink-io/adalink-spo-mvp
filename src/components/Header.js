@@ -10,7 +10,7 @@ import './Header.css'
 
 
 
-function Header({isLoggedIn,setLoggedIn,setAccountInfo,accountInfo,setImportantIPsList,walletAPI,setWalletAPI,walletName,setWalletName,walletIcon,setWalletIcon,lucid,Cookies,selectedIPID,selectedSPOID,setMessageWindowContent,setMessageWindowButtonText,setShowMessageWindow}) {
+function Header({isLoggedIn,setLoggedIn,setAccountInfo,accountInfo,setImportantIPsList,setImportantBRsList,walletAPI,setWalletAPI,walletName,setWalletName,walletIcon,setWalletIcon,lucid,Cookies,selectedIPID,selectedSPOID,setMessageWindowContent,setMessageWindowButtonText,setShowMessageWindow}) {
 
   const navigate = useNavigate();
 
@@ -98,6 +98,7 @@ function Header({isLoggedIn,setLoggedIn,setAccountInfo,accountInfo,setImportantI
           onClose={handleCloseWalletMenu}
           setAccountInfo={setAccountInfo}
           setImportantIPsList={setImportantIPsList}
+          setImportantBRsList={setImportantBRsList}
           setMessageWindowContent={setMessageWindowContent}
           setMessageWindowButtonText={setMessageWindowButtonText}
           setShowMessageWindow={setShowMessageWindow}  

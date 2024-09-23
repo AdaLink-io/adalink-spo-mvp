@@ -2,7 +2,7 @@ import React from 'react';
 import './WalletMenu.css';
 //import { useNavigate } from 'react-router-dom';
 
-const WalletMenu = ({ mode,setLoggedIn,lucid,setWalletAPI,setWalletName,setWalletIcon,Cookies,onClose,setAccountInfo,setImportantIPsList,setMessageWindowContent,setMessageWindowButtonText,setShowMessageWindow}) => {
+const WalletMenu = ({ mode,setLoggedIn,lucid,setWalletAPI,setWalletName,setWalletIcon,Cookies,onClose,setAccountInfo,setImportantIPsList,setImportantBRsList,setMessageWindowContent,setMessageWindowButtonText,setShowMessageWindow}) => {
   let walletAPI;
   const isNamiAvailable = window.cardano.nami !== undefined;
   const isEternlAvailable = window.cardano.eternl !== undefined;
@@ -26,7 +26,7 @@ const WalletMenu = ({ mode,setLoggedIn,lucid,setWalletAPI,setWalletName,setWalle
         //console.log(stakeAddress)
         let response = await fetch('https://adalink.io/api/get-account-info.php?stakeAddress='+stakeAddress,{cache:'reload'}); 
         let accountInfo = JSON.parse(await response.text());
-
+        let bonusRequestResponse;
         if (accountInfo!=null){
           setAccountInfo(accountInfo);
           setLoggedIn(true);
@@ -35,6 +35,9 @@ const WalletMenu = ({ mode,setLoggedIn,lucid,setWalletAPI,setWalletName,setWalle
             response = await fetch("https://adalink.io/api/get-affiliate-subscribed-ip-list.php?aID="+accountInfo['UniqueID'],{cache:"reload"});
           }else{
             response = await fetch("https://adalink.io/api/get-spo-ip-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
+            bonusRequestResponse = await fetch("https://adalink.io/api/get-spo-br-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
+            let importantBRsList = JSON.parse(await bonusRequestResponse.text());
+            setImportantBRsList(importantBRsList);
           }
           let importantIPsList = JSON.parse(await response.text());
           setImportantIPsList(importantIPsList);

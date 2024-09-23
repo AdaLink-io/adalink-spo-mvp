@@ -1,20 +1,24 @@
 // src/pages/Home.js
 import React, { useState, useEffect } from 'react';
+
 import './ProfilePage.css'; // Import the CSS file
 import { useNavigate } from 'react-router-dom';
 import editIcon from '../assets/images/edit-icon.png';
 import { displayNumberInPrettyFormat, getCurrentEpochNumber } from '../Constants';
 import EditWindow from '../components/EditWindow';
+import ConfirmWindow from '../components/ConfirmWindow';
 
 
-function ProfilePage({accountInfo,importantIPsList,setAccountInfo,setMessageWindowContent,setMessageWindowButtonText,setShowMessageWindow}) {
+function ProfilePage({accountInfo,importantIPsList,setImportantBRsList,importantBRsList,setAccountInfo,setMessageWindowContent,setMessageWindowButtonText,setShowMessageWindow}) {
   
   const navigate = useNavigate();
   const [isEditWindowOpen,setEditWindowOpen] =useState(false);
+  const [isConfirmWindoOpen,setConfirmWindowOpen]=useState(false);
   const [parameterToBeEdited,setParameterToBeEdited]=useState();
 
   const [ipDropDownListHTMLSyntax,setIPDropDownListHTMLSyntax]=useState();
   const [selectedIP,setSelectedIP]=useState();
+  const [selectedBR,setSelectedBr]=useState();
   const [currentEpoch,setCurrentEpoch]=useState(getCurrentEpochNumber());
   const [totalFunds,setTotalFunds]=useState();
   const [broughtADA,setBroughtADA]=useState();
@@ -85,6 +89,15 @@ function ProfilePage({accountInfo,importantIPsList,setAccountInfo,setMessageWind
     setMessageWindowContent("Affiliate link copied to clipboard.");
     setMessageWindowButtonText("OK");
     setShowMessageWindow(true);
+  }
+
+  async function handleBRRemoval(br){
+    //delete br from database
+    let response = await fetch('https://adalink.io/api/remove-bonus-request.php?requestID='+br["RequestID"],{cache:'reload'}); 
+    //delete br from importantBRList
+    let newImportantBRsList = importantBRsList.filter((item) => (item["Request"] ===br["RequestID"]));
+    setImportantBRsList(newImportantBRsList);
+    console.log(newImportantBRsList)
   }
 
   return (
@@ -360,7 +373,32 @@ function ProfilePage({accountInfo,importantIPsList,setAccountInfo,setMessageWind
           </div>
           }
         </div>}
-        </>}  
+        </>}
+        {accountInfo["PoolID"]!=undefined?
+        <div className='profile-section'>
+          <div className='section-title'>
+              <div>Bonus Requests</div>
+              <div style={{flex:2}} ><hr/></div>
+          </div>
+          <div className='br-container'>
+            <div>
+              {importantBRsList.map((br) => (
+                <div className='br-item'>
+                  <div className='br-details'>
+                    <div>Affiliate ID: {br["AffiliateID"]}</div>
+                    <div>Affiliate Name: {br["AffiliateDisplayName"]}</div>
+                    <div>Campaign Code: {br["StartEpoch"]}-{br["PoolTicker"]}</div>
+                  </div>
+                  <div className='br-buttons'>
+                    <button className='btnType1' onClick={() => {window.open("https://tip-preview.adalink.io/tip?AffEq="+br["AffiliateID"])}}>Tip</button>
+                    <button className='btnType1'  onClick={() => {setSelectedBr(br);setConfirmWindowOpen(true)}}>Remove</button>
+                  </div>
+                </div>))}
+            </div>
+          </div>
+       </div>
+       :
+       <></>}
         {isEditWindowOpen &&
         <EditWindow
           onClose={() => setEditWindowOpen(false)}
@@ -372,6 +410,12 @@ function ProfilePage({accountInfo,importantIPsList,setAccountInfo,setMessageWind
           setShowMessageWindow={setShowMessageWindow}
         />
         }      
+        {isConfirmWindoOpen &&
+        <ConfirmWindow
+          onClose={() => setConfirmWindowOpen(false)}
+          onAction={() => handleBRRemoval(selectedBR)}
+        />
+        }
       </div>
     </div>
   );

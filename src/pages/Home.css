@@ -139,7 +139,7 @@
   
   .ip-sub-details-area{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap:5px;
     align-items: end;
     justify-content: flex-end;

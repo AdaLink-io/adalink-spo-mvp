@@ -4,6 +4,7 @@ import './Home.css';
 import './SPOs.css'; // Import the CSS file
 import CreateProgramWindow from '../components/CreateProgramWindow';
 import AffiliateLinkWindow from '../components/AffiliateLinkWindow';
+import BonusRequestWindow from '../components/BonusRequestWindow';
 import searchIcon from '../assets/images/search-icon.svg';
 import filterIcon from '../assets/images/filter-icon.png';
 
@@ -29,6 +30,7 @@ function Home({isLoggedIn,ipsList,setIPsList,accountInfo,setImportantIPsList,wal
   
   const [isCreateProgramWindowOpen,setCreateWindowOpen]=useState(false);
   const [isAffiliateLinkWindowOpen,setAffiliateLinkWindowOpen]=useState(false);
+  const [isBonusRequestWindowOpen,setBonusRequestWindowOpen]=useState(false);
   
   const [ipsListHTMLSyntax,setIPsListHTMLSyntax] = useState(constructIPsListSyntax());
 
@@ -215,6 +217,7 @@ function Home({isLoggedIn,ipsList,setIPsList,accountInfo,setImportantIPsList,wal
             {
             currentEpoch<(ip['EndEpoch']-1)?
             <div className='ip-sub-details-area'>
+              <button className='btnType1' onClick={() => {setBonusRequestWindowOpen(true)}}>Request bonus</button>
               <button className='btnType1' onClick={() => {setAffiliateLinkWindowOpen(true)}}>Generate affiliate link</button>
             </div>
             :
@@ -351,6 +354,19 @@ function Home({isLoggedIn,ipsList,setIPsList,accountInfo,setImportantIPsList,wal
       spo={sposRecord[selectedIP["PoolID"]]}
       setImportantIPsList={setImportantIPsList}
       onClose={() => {setAffiliateLinkWindowOpen(false)}}
+      setMessageWindowContent={setMessageWindowContent}
+      setMessageWindowButtonText={setMessageWindowButtonText}
+      setShowMessageWindow={setShowMessageWindow}  
+    />
+    }
+    {isBonusRequestWindowOpen &&
+    <BonusRequestWindow
+      isLoggedIn={isLoggedIn}
+      accountInfo={accountInfo}
+      ip={selectedIP}
+      spo={sposRecord[selectedIP["PoolID"]]}
+      setImportantIPsList={setImportantIPsList}
+      onClose={() => {setBonusRequestWindowOpen(false)}}
       setMessageWindowContent={setMessageWindowContent}
       setMessageWindowButtonText={setMessageWindowButtonText}
       setShowMessageWindow={setShowMessageWindow}  
