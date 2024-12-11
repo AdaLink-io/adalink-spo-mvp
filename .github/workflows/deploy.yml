@@ -31,4 +31,6 @@ jobs:
         username: ${{ secrets.FTPS_USERNAME }}
         password: ${{ secrets.FTPS_PASSWORD }}
         protocol: ${{ secrets.FTPS_PROTOCOL }}
+        port: 21
+        security: "strict"
         local-dir: ./build/
