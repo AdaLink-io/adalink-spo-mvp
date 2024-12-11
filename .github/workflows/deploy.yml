@@ -1,7 +1,7 @@
 on: 
   push:
     branches:
-      - main
+      - Alternate-Domain-Backup
 name: 🚀 Deploy website on push
 
 jobs:
