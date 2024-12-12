@@ -27,8 +27,8 @@ jobs:
     - name: 📂 Upload to Cpanel
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: ${{ secrets.FTPS_SERVER }} 
-        username: ${{ secrets.FTPS_USERNAME }} 
-        password: ${{ secrets.FTPS_PASSWORD }} 
-        protocol: ${{ secrets.FTPS_PROTOCOL }}
+        server: ${{ secrets.FTP_SERVER }} 
+        username: ${{ secrets.FTP_USERNAME }} 
+        password: ${{ secrets.FTP_PASSWORD }} 
+        protocol: ${{ secrets.FTP_PROTOCOL }}
         local-dir: ./build/
