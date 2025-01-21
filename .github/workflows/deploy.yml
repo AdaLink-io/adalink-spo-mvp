@@ -33,3 +33,4 @@ jobs:
         protocol: ${{ secrets.FTPS_PROTOCOL }}
         port: 21
         local-dir: ./build/
+        remote-dir: /home/explrvry/lacriptoria.xyz
