@@ -33,4 +33,4 @@ jobs:
         protocol: ${{ secrets.FTPS_PROTOCOL }}
         port: 21
         local-dir: ./build/
-        server-dir: /home/explrvry/explorecardano.com/lacriptoria/lacriptoria.xyz/
+        server-dir: /home/explrvry/public_html/
