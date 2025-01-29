@@ -33,4 +33,4 @@ jobs:
         protocol: ftps
         port: 21
         local-dir: ./build/
-        server-dir: /home/nejypxbzlfaf/testblocks.xyz/holder/
+        server-dir: /home/nejypxbzlfaf/testblocks.xyz/holder
