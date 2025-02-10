@@ -33,4 +33,3 @@ jobs:
         protocol: ftps
         port: 21
         local-dir: ./build/
-        server-dir: /home/nejypxbzlfaf/public_html/
