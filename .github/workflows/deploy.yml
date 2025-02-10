@@ -30,6 +30,6 @@ jobs:
         server: ftp.testblocks.xyz
         username: ${{ secrets.FTPS_TEST_USERNAME }}
         password: ${{ secrets.FTPS_TEST_PASSWORD }}
-        protocol: ftps
+        protocol: ftp
         port: 21
         local-dir: ./build/
