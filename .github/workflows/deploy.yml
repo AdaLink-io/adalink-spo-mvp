@@ -27,9 +27,8 @@ jobs:
     - name: 📂 Upload to Cpanel
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: ftp.testblocks.xyz
-        username: ${{ secrets.CPANEL_USER_TESTBLOCKS }}
-        password: ${{ secrets.CPANEL_USER_PASSWORD }}
-        protocol: ftp
-        port: 21
+        server: ${{ secrets.CPANEL_SERVER }}
+        username: ${{ secrets.CPANEL_USERNAME }}
+        port: ${{ secrets.CPANEL_PORT }}
+        ssh_private_key: ${{ secrets.CPANEL_KEY }}
         local-dir: ./build/
