@@ -33,4 +33,5 @@ jobs:
         key: ${{ secrets.CPANEL_KEY }}
         passphrase: ${{ secrets.CPANEL_KEY_PASSPHRASE }}
         source: ./build/
+        target: ${{ secrets.CPANEL_TARGET }}
         debug: true
