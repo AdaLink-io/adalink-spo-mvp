@@ -32,5 +32,5 @@ jobs:
         port: ${{ secrets.CPANEL_PORT }}
         key: ${{ secrets.CPANEL_KEY }}
         passphrase: ${{ secrets.CPANEL_KEY_PASSPHRASE }}
-        source: ./build/
+        source: "./build/*"
         target: ${{ secrets.CPANEL_TARGET }}
