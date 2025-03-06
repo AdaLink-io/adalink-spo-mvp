@@ -5,7 +5,7 @@ let WEBSITE, SCRIPT_ADDRESS, FEE_ADDRESS, SCRIPT_UTXO_REFERENCE,RSO_ADDRESS;
 let NETWORK = 0; // 0 for testnet, 1 for mainnet
 switch (NETWORK){
 case 0: 
-  WEBSITE = 'https://test-orderbook.adalink.io';
+  WEBSITE = '/app-preview';
   SCRIPT_ADDRESS = 'addr_test1vzqtrsqwqac0lux0l037up2v0tdvgnwnvtgs2m0jqq2gk3gn8zvf4';//'';
   FEE_ADDRESS = "addr_test1qqq5wtc8tad6c0pwclnhcmp4tpwwx5ga50nvjzudgrqrmmdx7507pa0hyl2c8vc8le0lpegak7q75h4mf75rq5hfzpxslaa0nc";
   SCRIPT_UTXO_REFERENCE = "25e5cc55c416c5e08920d7e42072c3c98b6373a7ff26610e7782a9f6dccab14c";//"ab0dfb8f083ca8edd36d8c72e36d1bc039bf79d82a332bed671463846b89f5e0" // always #0
@@ -13,7 +13,7 @@ case 0:
 break;
 case 1:
   // For Mainnet settings
-  WEBSITE = 'https://orderbook.adalink.io';
+  WEBSITE = '/app-preview';
   SCRIPT_ADDRESS = 'addr1z9v4anaqysach58zsr9vl47s4laqlthl82eytnu72wdmhzfayyl96kffwyvq7ylkfuggu4p89nxtvnggmnspknnvaems977zmn';
   FEE_ADDRESS = "addr1q9mqg0svkvf20m78mgmjgf4jxzngvjyen5hcrtml9fd2h73ayyl96kffwyvq7ylkfuggu4p89nxtvnggmnspknnvaems20a4lu";
   SCRIPT_UTXO_REFERENCE = "96a4b124fa488533b832f336b77ab232a6223c6769147139ac8bdbb712a8cbd8" // always #0
