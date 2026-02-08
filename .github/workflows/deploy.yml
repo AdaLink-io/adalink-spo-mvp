@@ -1,36 +1,52 @@
-on: 
+on:
   push:
-    branches:
-      - main
-name: 🚀 Deploy website on push
+    branches: [ main ]
+
+name: "🚀 Deploy website on push"
 
 jobs:
   web-deploy:
-    name: 🎉 Deploy
+    name: "🎉 Deploy"
     runs-on: ubuntu-latest
-    steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v3
 
-    - name: Use Node.js 22
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
-      
-    - name: 🔨 Build Project
-      run: |
-        npm install
-        npm run build
-      env:
-        CI: ""
-    
-    - name: 📂 Upload to Cpanel
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.CPANEL_SERVER }}
-        username: ${{ secrets.CPANEL_USERNAME }}
-        port: ${{ secrets.CPANEL_PORT }}
-        key: ${{ secrets.CPANEL_KEY }}
-        passphrase: ${{ secrets.CPANEL_KEY_PASSPHRASE }}
-        source: "./build/*"
-        target: ${{ secrets.CPANEL_TARGET }}
+    steps:
+      - name: "🚚 Get latest code"
+        uses: actions/checkout@v4
+
+      - name: "Use Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: "🔨 Install + Build"
+        run: |
+          npm ci
+          npm run build
+        env:
+          CI: ""
+
+      # Clean target folder first (recommended)
+      - name: "🧹 Clean remote target"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.CPANEL_SERVER }}
+          username: ${{ secrets.CPANEL_USERNAME }}
+          port: ${{ secrets.CPANEL_PORT }}
+          key: ${{ secrets.CPANEL_KEY }}
+          passphrase: ${{ secrets.CPANEL_KEYPASS }}
+          script: |
+            rm -rf "${{ secrets.CPANEL_TARGET }}"/*
+            mkdir -p "${{ secrets.CPANEL_TARGET }}"
+
+      - name: "📂 Upload build to cPanel"
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.CPANEL_SERVER }}
+          username: ${{ secrets.CPANEL_USERNAME }}
+          port: ${{ secrets.CPANEL_PORT }}
+          key: ${{ secrets.CPANEL_KEY }}
+          passphrase: ${{ secrets.CPANEL_KEYPASS }}
+          source: "build/**"
+          target: ${{ secrets.CPANEL_TARGET }}
+          strip_components: 1
