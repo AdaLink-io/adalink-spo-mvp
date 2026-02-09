@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Update the import statement
 import { Lucid, Blockfrost } from 'lucid-cardano';
 import Cookies from 'js-cookie';
-import { WEBSITE } from './Constants';
+import { NETWORK } from './Constants';
 
 import './App.css';
 
@@ -21,14 +21,14 @@ import MessageWindow from './components/MessageWindow';
 import AffiliateTransaction from './pages/AffiliateTransaction';
 
 let lucid;
-switch(WEBSITE){
-  case 'https://test-orderbook.adalink.io':
+switch(NETWORK){
+  case 0:
     lucid = await Lucid.new(
       new Blockfrost("https://cardano-preview.blockfrost.io/api/v0", "preview7iVl38anG9Np8lT4JzXCKB16mxPC8Kyg"),
       "Preview",
     );
   break;
-  case 'https://orderbook.adalink.io':
+  case 1:
     lucid = await Lucid.new(
       new Blockfrost("https://cardano-mainnet.blockfrost.io/api/v0", "mainnetedOr1A0jt3OG6NJ4dI0U59cFb42hgD3t"),
       "Mainnet",
@@ -77,32 +77,41 @@ function App() {
 
   async function connectLastConnectedWallet(){
     if(Cookies.get('lastConnectedWalletName')){
-      //console.log('checking last connected wallet...');
-      let lastConnectedWalletName = Cookies.get('lastConnectedWalletName');
-      let lastConnectedWalletAPI;
-      switch(lastConnectedWalletName){
-        case 'nami':
-          lastConnectedWalletAPI = await window.cardano.nami.enable();
-          setWalletName('Nami');
-        break;
-        case 'eternl':
-          lastConnectedWalletAPI = await window.cardano.eternl.enable();
-          setWalletName('Eternl');
-        break;
-        case 'flint':
-          lastConnectedWalletAPI = await window.cardano.flint.enable();
-          setWalletName('Flint');
-        break;
-        default:
+      try {
+        //console.log('checking last connected wallet...');
+        let lastConnectedWalletName = Cookies.get('lastConnectedWalletName');
+        let lastConnectedWalletAPI;
+        switch(lastConnectedWalletName){
+          case 'nami':
+            lastConnectedWalletAPI = await window.cardano.nami.enable();
+            setWalletName('Nami');
+          break;
+          case 'eternl':
+            lastConnectedWalletAPI = await window.cardano.eternl.enable();
+            setWalletName('Eternl');
+          break;
+          case 'flint':
+            lastConnectedWalletAPI = await window.cardano.flint.enable();
+            setWalletName('Flint');
+          break;
+          default:
+        }
+
+        if(!lastConnectedWalletAPI){
+          throw new Error('Wallet extension is not available');
+        }
+        
+        setWalletAPI(lastConnectedWalletAPI);
+        connectedWalletAPI=lastConnectedWalletAPI;
+        Cookies.set('lastConnectedWalletName',lastConnectedWalletName,{expires:1000});
+        showLoadingWindow();
+        handleLogin(connectedWalletAPI);
+      } catch (error) {
+        Cookies.remove('lastConnectedWalletName');
+        setMessageWindowContent('Unable to reconnect the previously selected wallet. Please connect again.');
+        setMessageWindowButtonText('OK');
+        setShowMessageWindow(true);
       }
-      
-      setWalletAPI(lastConnectedWalletAPI);
-      //console.log(Cookies.get('lastConnectedWalletName'))
-      //console.log(walletName)
-      connectedWalletAPI=lastConnectedWalletAPI;
-      Cookies.set('lastConnectedWalletName',lastConnectedWalletName,{expires:1000});
-      showLoadingWindow();
-      handleLogin(connectedWalletAPI);
     }
   }
 
