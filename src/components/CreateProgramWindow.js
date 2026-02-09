@@ -207,7 +207,7 @@ const CreateProgramWindow = ({ walletAPI,walletName,walletIcon,lucid,openWalletM
   async function doesPoolHaveActiveProgram(poolID){
         
     let response, responseInfo;
-    response = await fetch('https://adalink.io/api/does-pool-have-active-program.php?poolID='+poolID+'&startEpoch='+currentEpoch,{cache:'reload'}); 
+    response = await fetch('/api/does-pool-have-active-program.php?poolID='+poolID+'&startEpoch='+currentEpoch,{cache:'reload'}); 
     responseInfo = JSON.parse(await response.text());
     
     if(responseInfo=="-1"){

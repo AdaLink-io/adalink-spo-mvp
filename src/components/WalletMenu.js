@@ -24,7 +24,7 @@ const WalletMenu = ({ mode,setLoggedIn,lucid,setWalletAPI,setWalletName,setWalle
         lucid.selectWallet(walletAPI);
         let stakeAddress = await lucid.wallet.rewardAddress();
         //console.log(stakeAddress)
-        let response = await fetch('https://adalink.io/api/get-account-info.php?stakeAddress='+stakeAddress,{cache:'reload'}); 
+        let response = await fetch('/api/get-account-info.php?stakeAddress='+stakeAddress,{cache:'reload'}); 
         let accountInfo = JSON.parse(await response.text());
         let bonusRequestResponse;
         if (accountInfo!=null){
@@ -32,10 +32,10 @@ const WalletMenu = ({ mode,setLoggedIn,lucid,setWalletAPI,setWalletName,setWalle
           setLoggedIn(true);
           setShowMessageWindow(false);
           if(accountInfo['UniqueID']!=undefined){
-            response = await fetch("https://adalink.io/api/get-affiliate-subscribed-ip-list.php?aID="+accountInfo['UniqueID'],{cache:"reload"});
+            response = await fetch("/api/get-affiliate-subscribed-ip-list.php?aID="+accountInfo['UniqueID'],{cache:"reload"});
           }else{
-            response = await fetch("https://adalink.io/api/get-spo-ip-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
-            bonusRequestResponse = await fetch("https://adalink.io/api/get-spo-br-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
+            response = await fetch("/api/get-spo-ip-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
+            bonusRequestResponse = await fetch("/api/get-spo-br-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
             let importantBRsList = JSON.parse(await bonusRequestResponse.text());
             setImportantBRsList(importantBRsList);
           }

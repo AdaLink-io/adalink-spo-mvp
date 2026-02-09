@@ -29,7 +29,7 @@ const BonusRequestWindow = ({ ip,spo,onClose,accountInfo,setImportantIPsList,set
     setMessageWindowButtonText("");
     setShowMessageWindow(true);
     let requestID = ip['StartEpoch']+"-"+spo['Ticker']+"-"+accountInfo['UniqueID'];
-    let response = await fetch("https://adalink.io/api/create-new-bonus-request.php?requestID="+requestID+"&affiliateID="+accountInfo['UniqueID']+'&affiliateDisplayName='+accountInfo['DisplayName']+'&poolID='+ip["PoolID"]+'&poolTicker='+spo['Ticker']+'&startEpoch='+ip['StartEpoch']+'&endEpoch='+ip['EndEpoch'],{cache:"reload"});
+    let response = await fetch("/api/create-new-bonus-request.php?requestID="+requestID+"&affiliateID="+accountInfo['UniqueID']+'&affiliateDisplayName='+accountInfo['DisplayName']+'&poolID='+ip["PoolID"]+'&poolTicker='+spo['Ticker']+'&startEpoch='+ip['StartEpoch']+'&endEpoch='+ip['EndEpoch'],{cache:"reload"});
     let result = await response.text();
     if(result == "New record created successfully"){
       setMessageWindowContent("Successfully requested bonus on this program.");

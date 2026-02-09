@@ -57,8 +57,8 @@ const EditWindow = ({ onClose,parameterToBeEdited,accountInfo,setAccountInfo,set
 
     let key=paymentAddress.substring(11,12)+paymentAddress.substring(22,23)+paymentAddress.substring(33,34)+paymentAddress.substring(44,45);
     //console.log(key)
-    //console.log("https://adalink.io/api/edit-user-parameter-adalink.php?stakeAddress="+stakeAddress+'&parameter='+parameterToBeEdited.replace(/\s/g, "")+'&value='+parameterNewValue+'&type='+userType+'&key='+key)
-    let response = await fetch("https://adalink.io/api/edit-user-parameter-adalink.php?stakeAddress="+stakeAddress+'&parameter='+parameterToBeEdited.replace(/\s/g, "")+'&value='+parameterNewValue+'&type='+userType+'&key='+key,{cache:'reload'});
+    //console.log("/api/edit-user-parameter-adalink.php?stakeAddress="+stakeAddress+'&parameter='+parameterToBeEdited.replace(/\s/g, "")+'&value='+parameterNewValue+'&type='+userType+'&key='+key)
+    let response = await fetch("/api/edit-user-parameter-adalink.php?stakeAddress="+stakeAddress+'&parameter='+parameterToBeEdited.replace(/\s/g, "")+'&value='+parameterNewValue+'&type='+userType+'&key='+key,{cache:'reload'});
     let result = await response.text();
     //console.log(result);
     if (result === "Record updated successfully"){

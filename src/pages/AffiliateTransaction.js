@@ -15,7 +15,7 @@ if(linkID!==null){
   ipDetails = JSON.parse(await response.text());
   poolID=ipDetails[0]['PoolID'];
   affiliateID = ipDetails[0]['AffiliateID'];
-  response = await fetch('https://adalink.io/api/get-link-details.php?poolid='+poolID+'&aid='+affiliateID,{cache:"reload"}); 
+  response = await fetch('/api/get-link-details.php?poolid='+poolID+'&aid='+affiliateID,{cache:"reload"}); 
 }
 let linkDetails;
 try{
