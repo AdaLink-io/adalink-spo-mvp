@@ -45,7 +45,7 @@ function Home({isLoggedIn,ipsList,setIPsList,accountInfo,setImportantIPsList,wal
     const intervalId = setInterval(() => {
       // This code will run every 10 seconds
       //in development it is set to 10 hrs instead of 10000
-      fetch('https://adalink.io/api/get-ips-list.php',{cache:'reload'})
+      fetch('/api/get-ips-list.php',{cache:'reload'})
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
