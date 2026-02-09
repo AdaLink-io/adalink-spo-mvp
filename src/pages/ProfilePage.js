@@ -93,7 +93,7 @@ function ProfilePage({accountInfo,importantIPsList,setImportantBRsList,important
 
   async function handleBRRemoval(br){
     //delete br from database
-    let response = await fetch('https://adalink.io/api/remove-bonus-request.php?requestID='+br["RequestID"],{cache:'reload'}); 
+    let response = await fetch('/api/remove-bonus-request.php?requestID='+br["RequestID"],{cache:'reload'}); 
     //delete br from importantBRList
     let newImportantBRsList = importantBRsList.filter((item) => (item["Request"] ===br["RequestID"]));
     setImportantBRsList(newImportantBRsList);
