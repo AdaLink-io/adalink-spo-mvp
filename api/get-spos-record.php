@@ -1,34 +1,35 @@
 <?php
+
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Handle preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   http_response_code(204);
   exit;
 }
 
-$table = "StakePools";
+// ---- DB CONFIG (move to env/config later) ----
 $servername = "localhost";
-$username = "adaldlee_fourzin";
-$password = "YA,SODvt-.X^";
-$dbname = "adaldlee_adalink";
+$username   = "adaldlee_fourzin";
+$password   = "YA,SODvt-.X^";
+$dbname     = "adaldlee_adalink";
+$table      = "StakePools";
 
-// Create connection
+// ---- CONNECT ----
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
   http_response_code(500);
   echo json_encode([
-    "error" => "Connection failed",
+    "error" => "DB connection failed",
     "details" => $conn->connect_error
   ]);
   exit;
 }
 
-// Recommended if non-ascii text exists
 $conn->set_charset("utf8mb4");
+
 
 $sql = "SELECT PoolID, Ticker, DisplayName, PFP, LiveStake, Saturation FROM `$table`";
 $result = $conn->query($sql);
@@ -43,24 +44,24 @@ if (!$result) {
   exit;
 }
 
-// Build an object keyed by PoolID
-$out = [];
+$data = [];
 
 while ($row = $result->fetch_assoc()) {
-  $poolId = (string)($row['PoolID'] ?? '');
+  $poolId = $row["PoolID"];
 
-  // Normalize any backslashes in URLs/paths
-  $pfp = isset($row['PFP']) ? str_replace("\\", "/", $row['PFP']) : "";
+  $liveStake   = is_numeric($row["LiveStake"]) ? (float)$row["LiveStake"] : null;
+  $saturation  = is_numeric($row["Saturation"]) ? (float)$row["Saturation"] : null;
 
-  $out[$poolId] = [
-    "Ticker"      => (string)($row['Ticker'] ?? ''),
-    "DisplayName" => (string)($row['DisplayName'] ?? ''),
-    "PFP"         => (string)$pfp,
-    "LiveStake"   => is_numeric($row['LiveStake'] ?? null) ? (float)$row['LiveStake'] : 0,
-    "Saturation"  => is_numeric($row['Saturation'] ?? null) ? (float)$row['Saturation'] : 0,
+  $data[$poolId] = [
+    "Ticker"      => $row["Ticker"],
+    "DisplayName" => $row["DisplayName"],
+    "PFP"         => $row["PFP"],
+    "LiveStake"   => $liveStake,
+    "Saturation"  => $saturation
   ];
 }
 
-echo json_encode($out, JSON_UNESCAPED_SLASHES);
-
 $conn->close();
+
+// IMPORTANT: encode the array (NOT a JSON string)
+echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
