@@ -47,6 +47,8 @@ let initialIPsList = JSON.parse(await response.text());
 
 let selectedSPOID="0";
 let selectedIPID="0";
+const routerBasename = (process.env.PUBLIC_URL || '/spo').replace(/\/$/, '');
+
 function App() {
   const [walletAPI,setWalletAPI]=useState();
   const [walletName,setWalletName]=useState();
@@ -139,7 +141,7 @@ function App() {
     }
 
   return (
-    <Router basename={process.env.PUBLIC_URL}>
+    <Router basename={routerBasename}>
       <div className="App">
         <Header 
           isLoggedIn={isLoggedIn} 
