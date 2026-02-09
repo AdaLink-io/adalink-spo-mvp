@@ -25,15 +25,20 @@ if ($conn->connect_error) {
 $sql = "SELECT PoolID, Ticker, DisplayName, PFP, LiveStake, Saturation FROM $table";
 $result = $conn->query($sql);
 
-$out = []; // IMPORTANT: this is an object map keyed by PoolID
+$data = [];
 
 if ($result && $result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
     $poolId = $row['PoolID'];
-    unset($row['PoolID']);          // remove PoolID from inner object
-    $out[$poolId] = $row;           // map PoolID -> row data
+    $data[$poolId] = [
+      "Ticker" => $row["Ticker"],
+      "DisplayName" => $row["DisplayName"],
+      "PFP" => $row["PFP"],
+      "LiveStake" => is_numeric($row["LiveStake"]) ? (float)$row["LiveStake"] : $row["LiveStake"],
+      "Saturation" => is_numeric($row["Saturation"]) ? (float)$row["Saturation"] : $row["Saturation"],
+    ];
   }
 }
 
-echo json_encode($out, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+echo json_encode($data, JSON_UNESCAPED_SLASHES);
 $conn->close();
