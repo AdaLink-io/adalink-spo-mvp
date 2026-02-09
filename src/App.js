@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Update the import statement
 import { Lucid, Blockfrost } from 'lucid-cardano';
 import Cookies from 'js-cookie';
-import { WEBSITE } from './Constants';
+import { NETWORK } from './Constants';
 
 import './App.css';
 
@@ -21,14 +21,14 @@ import MessageWindow from './components/MessageWindow';
 import AffiliateTransaction from './pages/AffiliateTransaction';
 
 let lucid;
-switch(WEBSITE){
-  case 'https://test-orderbook.adalink.io':
+switch(NETWORK){
+  case 0:
     lucid = await Lucid.new(
       new Blockfrost("https://cardano-preview.blockfrost.io/api/v0", "preview7iVl38anG9Np8lT4JzXCKB16mxPC8Kyg"),
       "Preview",
     );
   break;
-  case 'https://orderbook.adalink.io':
+  case 1:
     lucid = await Lucid.new(
       new Blockfrost("https://cardano-mainnet.blockfrost.io/api/v0", "mainnetedOr1A0jt3OG6NJ4dI0U59cFb42hgD3t"),
       "Mainnet",
@@ -47,6 +47,8 @@ let initialIPsList = JSON.parse(await response.text());
 
 let selectedSPOID="0";
 let selectedIPID="0";
+const routerBasename = (process.env.PUBLIC_URL || '/spo').replace(/\/$/, '');
+
 function App() {
   const [walletAPI,setWalletAPI]=useState();
   const [walletName,setWalletName]=useState();
@@ -57,7 +59,7 @@ function App() {
   
   const [accountInfo,setAccountInfo] = useState({StakeAddress:"0"});
   const [importantIPsList,setImportantIPsList]=useState();
-  const [importantBRsList,setImportantBRsList]=useState();
+  const [importantBRsList,setImportantBRsList]=useState([]);
   
   const [showMessageWindow,setShowMessageWindow] = useState(false);
   const [messageWindowContent,setMessageWindowContent] = useState('');
@@ -75,32 +77,41 @@ function App() {
 
   async function connectLastConnectedWallet(){
     if(Cookies.get('lastConnectedWalletName')){
-      //console.log('checking last connected wallet...');
-      let lastConnectedWalletName = Cookies.get('lastConnectedWalletName');
-      let lastConnectedWalletAPI;
-      switch(lastConnectedWalletName){
-        case 'nami':
-          lastConnectedWalletAPI = await window.cardano.nami.enable();
-          setWalletName('Nami');
-        break;
-        case 'eternl':
-          lastConnectedWalletAPI = await window.cardano.eternl.enable();
-          setWalletName('Eternl');
-        break;
-        case 'flint':
-          lastConnectedWalletAPI = await window.cardano.flint.enable();
-          setWalletName('Flint');
-        break;
-        default:
+      try {
+        //console.log('checking last connected wallet...');
+        let lastConnectedWalletName = Cookies.get('lastConnectedWalletName');
+        let lastConnectedWalletAPI;
+        switch(lastConnectedWalletName){
+          case 'nami':
+            lastConnectedWalletAPI = await window.cardano.nami.enable();
+            setWalletName('Nami');
+          break;
+          case 'eternl':
+            lastConnectedWalletAPI = await window.cardano.eternl.enable();
+            setWalletName('Eternl');
+          break;
+          case 'flint':
+            lastConnectedWalletAPI = await window.cardano.flint.enable();
+            setWalletName('Flint');
+          break;
+          default:
+        }
+
+        if(!lastConnectedWalletAPI){
+          throw new Error('Wallet extension is not available');
+        }
+        
+        setWalletAPI(lastConnectedWalletAPI);
+        connectedWalletAPI=lastConnectedWalletAPI;
+        Cookies.set('lastConnectedWalletName',lastConnectedWalletName,{expires:1000});
+        showLoadingWindow();
+        handleLogin(connectedWalletAPI);
+      } catch (error) {
+        Cookies.remove('lastConnectedWalletName');
+        setMessageWindowContent('Unable to reconnect the previously selected wallet. Please connect again.');
+        setMessageWindowButtonText('OK');
+        setShowMessageWindow(true);
       }
-      
-      setWalletAPI(lastConnectedWalletAPI);
-      //console.log(Cookies.get('lastConnectedWalletName'))
-      //console.log(walletName)
-      connectedWalletAPI=lastConnectedWalletAPI;
-      Cookies.set('lastConnectedWalletName',lastConnectedWalletName,{expires:1000});
-      showLoadingWindow();
-      handleLogin(connectedWalletAPI);
     }
   }
 
@@ -121,7 +132,7 @@ function App() {
         response = await fetch("/api/get-spo-ip-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
         let bonusRequestResponse = await fetch("/api/get-spo-br-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
         let importantBRsList = JSON.parse(await bonusRequestResponse.text());
-        setImportantBRsList(importantBRsList);
+        setImportantBRsList(Array.isArray(importantBRsList) ? importantBRsList : []);
       }
       let importantIPsList = JSON.parse(await response.text());
       setImportantIPsList(importantIPsList);
@@ -139,7 +150,7 @@ function App() {
     }
 
   return (
-    <Router>
+    <Router basename={routerBasename}>
       <div className="App">
         <Header 
           isLoggedIn={isLoggedIn} 
@@ -203,7 +214,7 @@ function App() {
                 accountInfo={accountInfo}
                 importantIPsList={importantIPsList}
                 setImportantBRsList={setImportantBRsList}
-                importantBRsList={importantBRsList}
+                importantBRsList={importantBRsList ?? []}
                 setAccountInfo={setAccountInfo}
                 setMessageWindowContent={setMessageWindowContent}
                 setMessageWindowButtonText={setMessageWindowButtonText}
@@ -237,4 +248,3 @@ function App() {
 }
 
 export default App;
-

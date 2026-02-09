@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignUpWindow.css';
 import downArrow from '../assets/images/down-arrow.svg';
 import uploadImg from '../assets/images/upload.png';
 import infoLogo from "../assets/images/q-mark.png";
 import { NETWORK } from '../Constants';
+import { Lucid, Blockfrost } from 'lucid-cardano';
 
 
 const SignUpWindow = ({ walletAPI,walletName,walletIcon,lucid,openWalletMenu,onClose,setLoggedIn,setAccountInfo,selectedIPID,selectedSPOID,setMessageWindowContent,setMessageWindowButtonText,setShowMessageWindow}) => {
@@ -28,132 +29,144 @@ const SignUpWindow = ({ walletAPI,walletName,walletIcon,lucid,openWalletMenu,onC
   }
 
   async function handleRegistration() {
+    let registrationSuccess = false;
 
-    
+    try {
+      let selectedUserType = document.getElementById('userType').value;
+      let displayName = document.getElementById('dispalyNameInput').value;
+      let poolID = document.getElementById('poolIDInput')?.value;
+      let website = document.getElementById('websiteInput').value;
+      let socialLink = document.getElementById('socialLinkInput').value;
+      let selectedUserPFP = document.getElementById('userPFPInput').files[0];
 
-    let userType = document.getElementById('userType').value;
-    let displayName = document.getElementById('dispalyNameInput').value;
-    let poolID = document.getElementById('poolIDInput')?.value;
-    let website = document.getElementById('websiteInput').value;
-    let socialLink = document.getElementById('socialLinkInput').value;
-    let userPFP = document.getElementById('userPFPInput').files[0];
-
-    setMessageWindowContent("Checking user input...");
-    setMessageWindowButtonText('')
-    setShowMessageWindow(true);
-
-    if(displayName.replace(/\s/g, "").length<5){
-      setMessageWindowContent("Display name has to be longer than 4 charecters.");
-      setMessageWindowButtonText('OK');
+      setMessageWindowContent("Checking user input...");
+      setMessageWindowButtonText('');
       setShowMessageWindow(true);
-      return;
-    }
 
-    if(userPFP===undefined){
-      setMessageWindowContent("It is always better to upload a profile picture.");
-      setMessageWindowButtonText('OK');
-      setShowMessageWindow(true);
-      return;
-    }
-
-    //exit if user did not permit access or choose wallet
-    if(walletAPI===undefined){
-      setMessageWindowContent("Please select a wallet");
-      setMessageWindowButtonText('OK');
-      setShowMessageWindow(true);
-      return;
-    }
-    
-
-    lucid.selectWallet(walletAPI);
-    let paymentAddress = await lucid.wallet.address();
-    let stakeAddress = await lucid.wallet.rewardAddress();
-    let walletNetwork = await walletAPI.getNetworkId();
-
-    //exit if wallet network does not match dapp network
-    if(walletNetwork!==NETWORK){
-      setMessageWindowContent("Please select correct wallet's network.");
-      setMessageWindowButtonText('OK');
-      setShowMessageWindow(true);
-      return;
-    }    
-
-
-
-    if(userType=="SPO"){
-      if(await isAccountRegistered(userType,"poolID",poolID)){
-        setMessageWindowContent("Can not create account. This pool ID is already associated with an account.");
-        setMessageWindowButtonText('OK');
-        setShowMessageWindow(true);
-        return;
+      if (displayName.replace(/\s/g, "").length < 5) {
+        throw new Error("Display name has to be longer than 4 charecters.");
       }
-      if(poolID.substring(0,4)!="pool"){
-        setMessageWindowContent("Pool ID must start with \"pool1...\".");
-        setMessageWindowButtonText('OK');
-        setShowMessageWindow(true);
-        return;
+
+      if (selectedUserPFP === undefined) {
+        throw new Error("It is always better to upload a profile picture.");
       }
-    }
 
-    if(await isAccountRegistered(userType,"stakeAddress",stakeAddress)){
-      setMessageWindowContent("Can not create account. This wallet is already associated with an account.");
-      setMessageWindowButtonText('OK');
-      setShowMessageWindow(true);
-      return;
-    }    
+      const walletKeyByName = {
+        Nami: 'nami',
+        Eternl: 'eternl',
+        Flint: 'flint',
+        Typhon: 'typhon',
+      };
 
-    //create formData object and populate the account data
-    let newAccountData = new FormData();
-    newAccountData.append('network',NETWORK);
-    newAccountData.append('userType',userType);
-    newAccountData.append('displayName',displayName);
-    newAccountData.append('poolID',poolID);
-    newAccountData.append('website',website);
-    newAccountData.append('socialLink',socialLink);
-    newAccountData.append('userPFP',userPFP,userPFP.name);
-    newAccountData.append('walletType',walletName);
+      const selectedWalletKey = walletKeyByName[walletName] || 'eternl';
+      if (!window.cardano || !window.cardano[selectedWalletKey]) {
+        throw new Error(`${walletName || 'Selected wallet'} not detected. Please unlock/install the extension and try again.`);
+      }
 
-    newAccountData.append('paymentAddress',paymentAddress);
-    newAccountData.append('stakeAddress',stakeAddress);
+      const connectedWalletAPI = walletAPI || await window.cardano[selectedWalletKey].enable();
+      if (!connectedWalletAPI) {
+        throw new Error('Wallet connection was not established.');
+      }
 
-    //setBufferWindowMessage("Creating account...");
-    
-    let url="/api/create-new-account.php";
-    let queryResponse = await fetch(url, {
-        method: 'POST', 
-        mode: 'cors', 
-        cache: 'no-cache', 
-        credentials: 'same-origin', 
-        
+      let lucidInstance = lucid;
+      if (!lucidInstance) {
+        lucidInstance = await Lucid.new(
+          new Blockfrost(
+            NETWORK === 0
+              ? 'https://cardano-preview.blockfrost.io/api/v0'
+              : 'https://cardano-mainnet.blockfrost.io/api/v0',
+            NETWORK === 0
+              ? 'preview7iVl38anG9Np8lT4JzXCKB16mxPC8Kyg'
+              : 'mainnetedOr1A0jt3OG6NJ4dI0U59cFb42hgD3t',
+          ),
+          NETWORK === 0 ? 'Preview' : 'Mainnet',
+        );
+      }
+
+      if (!lucidInstance) {
+        throw new Error('Wallet service is not ready yet. Please try again.');
+      }
+
+      lucidInstance.selectWallet(connectedWalletAPI);
+      let paymentAddress = await lucidInstance.wallet.address();
+      let stakeAddress = await lucidInstance.wallet.rewardAddress();
+      let walletNetwork = await connectedWalletAPI.getNetworkId();
+
+      //exit if wallet network does not match dapp network
+      if (walletNetwork !== NETWORK) {
+        throw new Error("Please select correct wallet's network.");
+      }
+
+      if (selectedUserType == "SPO") {
+        if (await isAccountRegistered(selectedUserType, "poolID", poolID)) {
+          throw new Error("Can not create account. This pool ID is already associated with an account.");
+        }
+        if (poolID.substring(0, 4) != "pool") {
+          throw new Error('Pool ID must start with "pool1...".');
+        }
+      }
+
+      if (await isAccountRegistered(selectedUserType, "stakeAddress", stakeAddress)) {
+        throw new Error("Can not create account. This wallet is already associated with an account.");
+      }
+
+      //create formData object and populate the account data
+      let newAccountData = new FormData();
+      newAccountData.append('network', NETWORK);
+      newAccountData.append('userType', selectedUserType);
+      newAccountData.append('displayName', displayName);
+      newAccountData.append('poolID', poolID);
+      newAccountData.append('website', website);
+      newAccountData.append('socialLink', socialLink);
+      newAccountData.append('userPFP', selectedUserPFP, selectedUserPFP.name);
+      newAccountData.append('walletType', walletName || selectedWalletKey);
+
+      newAccountData.append('paymentAddress', paymentAddress);
+      newAccountData.append('stakeAddress', stakeAddress);
+
+      let url = "/api/create-new-account.php";
+      let queryResponse = await fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+
         redirect: 'follow',
-        referrerPolicy: 'no-referrer', 
-        body: newAccountData // string variable
+        referrerPolicy: 'no-referrer',
+        body: newAccountData,
       });
 
-    let queryResult=await queryResponse.text();
-    //console.log(await queryResponse.text());
-    
-    if(queryResult==="New record created successfully"){
-      let response = await fetch('/api/get-account-info.php?stakeAddress='+stakeAddress,{cache:'reload'}); 
-      let accountInfo = JSON.parse(await response.text());
-      setAccountInfo(accountInfo);
-      setLoggedIn(true);
-      setMessageWindowContent("Your account has been created successfully!")
-      setMessageWindowButtonText("Ok");
-      setShowMessageWindow(true);
-      onClose();
-      navigate('/profile');
-      selectedSPOID="0";
-      selectedIPID="0";
-    }else{
-      //setMessageWindowContent("Unable to create new account.");
-      setMessageWindowContent(queryResult);
-      setMessageWindowButtonText("Ok");
-      setShowMessageWindow(true);
-    }
-    //await loginToAccount(rewardAddress);
+      let queryResult = await queryResponse.text();
 
+      if (queryResult === "New record created successfully") {
+        let response = await fetch('/api/get-account-info.php?stakeAddress=' + stakeAddress, { cache: 'reload' });
+        let accountInfo = JSON.parse(await response.text());
+        setAccountInfo(accountInfo);
+        setLoggedIn(true);
+        setMessageWindowContent("Your account has been created successfully!");
+        setMessageWindowButtonText("Ok");
+        setShowMessageWindow(true);
+        onClose();
+        navigate('/profile');
+        selectedSPOID = "0";
+        selectedIPID = "0";
+        registrationSuccess = true;
+      } else {
+        throw new Error(queryResult || 'Unable to create new account.');
+      }
+    } catch (error) {
+      localStorage.removeItem('lastConnectedWalletName');
+      document.cookie = 'lastConnectedWalletName=; Max-Age=0; path=/';
+      setMessageWindowContent(error?.message || 'Unexpected error while creating the account.');
+      setMessageWindowButtonText('OK');
+      setShowMessageWindow(true);
+    } finally {
+      if (!registrationSuccess) {
+        setMessageWindowButtonText('OK');
+      }
+    }
   }
+
 
   async function isAccountRegistered(userType,checkWith,checkValue){
         

@@ -9,7 +9,7 @@ import EditWindow from '../components/EditWindow';
 import ConfirmWindow from '../components/ConfirmWindow';
 
 
-function ProfilePage({accountInfo,importantIPsList,setImportantBRsList,importantBRsList,setAccountInfo,setMessageWindowContent,setMessageWindowButtonText,setShowMessageWindow}) {
+function ProfilePage({accountInfo,importantIPsList,setImportantBRsList,importantBRsList = [],setAccountInfo,setMessageWindowContent,setMessageWindowButtonText,setShowMessageWindow}) {
   
   const navigate = useNavigate();
   const [isEditWindowOpen,setEditWindowOpen] =useState(false);
@@ -22,6 +22,8 @@ function ProfilePage({accountInfo,importantIPsList,setImportantBRsList,important
   const [currentEpoch,setCurrentEpoch]=useState(getCurrentEpochNumber());
   const [totalFunds,setTotalFunds]=useState();
   const [broughtADA,setBroughtADA]=useState();
+
+  const safeImportantBRsList = Array.isArray(importantBRsList) ? importantBRsList : [];
 
   function redirectTo(page){
     navigate('/'+page);
@@ -95,7 +97,7 @@ function ProfilePage({accountInfo,importantIPsList,setImportantBRsList,important
     //delete br from database
     let response = await fetch('/api/remove-bonus-request.php?requestID='+br["RequestID"],{cache:'reload'}); 
     //delete br from importantBRList
-    let newImportantBRsList = importantBRsList.filter((item) => (item["Request"] ===br["RequestID"]));
+    let newImportantBRsList = safeImportantBRsList.filter((item) => (item["Request"] ===br["RequestID"]));
     setImportantBRsList(newImportantBRsList);
     console.log(newImportantBRsList)
   }
@@ -382,7 +384,10 @@ function ProfilePage({accountInfo,importantIPsList,setImportantBRsList,important
           </div>
           <div className='br-container'>
             <div>
-              {importantBRsList.map((br) => (
+              {safeImportantBRsList.length===0?
+              <div>No bonus requests yet.</div>
+              :
+              safeImportantBRsList.map((br) => (
                 <div className='br-item'>
                   <div className='br-details'>
                     <div>Affiliate ID: {br["AffiliateID"]}</div>
@@ -393,7 +398,8 @@ function ProfilePage({accountInfo,importantIPsList,setImportantBRsList,important
                     <button className='btnType1' onClick={() => {window.open("https://tip-preview.adalink.io/tip?AffEq="+br["AffiliateID"])}}>Tip</button>
                     <button className='btnType1'  onClick={() => {setSelectedBr(br);setConfirmWindowOpen(true)}}>Remove</button>
                   </div>
-                </div>))}
+                </div>))
+            }
             </div>
           </div>
        </div>
