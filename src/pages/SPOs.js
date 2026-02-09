@@ -6,7 +6,7 @@ import filterIcon from '../assets/images/filter-icon.png';
 
 import {displayNumberInPrettyFormat,getCurrentEpochNumber} from '../Constants';
 
-let response = await fetch('https://adalink.io/api/get-spos-list.php',{cache:"reload"}); 
+let response = await fetch('/api/get-spos-list.php',{cache:"reload"}); 
 let sposList = JSON.parse(await response.text());
 let searchedSPOsList = sposList;
 //console.log(sposList)
