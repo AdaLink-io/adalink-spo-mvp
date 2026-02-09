@@ -37,7 +37,7 @@ const WalletMenu = ({ mode,setLoggedIn,lucid,setWalletAPI,setWalletName,setWalle
             response = await fetch("/api/get-spo-ip-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
             bonusRequestResponse = await fetch("/api/get-spo-br-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
             let importantBRsList = JSON.parse(await bonusRequestResponse.text());
-            setImportantBRsList(importantBRsList);
+            setImportantBRsList(Array.isArray(importantBRsList) ? importantBRsList : []);
           }
           let importantIPsList = JSON.parse(await response.text());
           setImportantIPsList(importantIPsList);

@@ -59,7 +59,7 @@ function App() {
   
   const [accountInfo,setAccountInfo] = useState({StakeAddress:"0"});
   const [importantIPsList,setImportantIPsList]=useState();
-  const [importantBRsList,setImportantBRsList]=useState();
+  const [importantBRsList,setImportantBRsList]=useState([]);
   
   const [showMessageWindow,setShowMessageWindow] = useState(false);
   const [messageWindowContent,setMessageWindowContent] = useState('');
@@ -132,7 +132,7 @@ function App() {
         response = await fetch("/api/get-spo-ip-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
         let bonusRequestResponse = await fetch("/api/get-spo-br-list.php?poolID="+accountInfo['PoolID'],{cache:"reload"});
         let importantBRsList = JSON.parse(await bonusRequestResponse.text());
-        setImportantBRsList(importantBRsList);
+        setImportantBRsList(Array.isArray(importantBRsList) ? importantBRsList : []);
       }
       let importantIPsList = JSON.parse(await response.text());
       setImportantIPsList(importantIPsList);
@@ -214,7 +214,7 @@ function App() {
                 accountInfo={accountInfo}
                 importantIPsList={importantIPsList}
                 setImportantBRsList={setImportantBRsList}
-                importantBRsList={importantBRsList}
+                importantBRsList={importantBRsList ?? []}
                 setAccountInfo={setAccountInfo}
                 setMessageWindowContent={setMessageWindowContent}
                 setMessageWindowButtonText={setMessageWindowButtonText}
