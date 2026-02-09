@@ -139,7 +139,7 @@ function App() {
     }
 
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <div className="App">
         <Header 
           isLoggedIn={isLoggedIn} 
@@ -237,4 +237,3 @@ function App() {
 }
 
 export default App;
-
