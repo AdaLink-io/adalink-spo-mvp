@@ -19,7 +19,7 @@ if(linkID!==null){
 }
 let linkDetails;
 try{
-  linkDetails = JSON.parse(await response.text());
+  linkDetails = await response.json();
 }catch{
   console.log('Could not load linkDetails')
 }
