@@ -38,10 +38,10 @@ const AffiliateLinkWindow = ({ ip,spo,onClose,accountInfo,setImportantIPsList,se
     let linkID = ip['StartEpoch']+"-"+spo['Ticker']+"-"+accountInfo['UniqueID'];
     let affiliateLink="https://app-preview.adalink.io/affiliate-transaction?linkid="+linkID;
     navigator.clipboard.writeText(affiliateLink);
-    let response = await fetch("https://adalink.io/api/create-new-affiliate-link.php?linkID="+linkID+"&affiliateID="+accountInfo['UniqueID']+'&affiliateDisplayName='+accountInfo['DisplayName']+'&poolID='+ip["PoolID"]+'&poolTicker='+spo['Ticker']+'&startEpoch='+ip['StartEpoch']+'&endEpoch='+ip['EndEpoch'],{cache:"reload"});
+    let response = await fetch("/api/create-new-affiliate-link.php?linkID="+linkID+"&affiliateID="+accountInfo['UniqueID']+'&affiliateDisplayName='+accountInfo['DisplayName']+'&poolID='+ip["PoolID"]+'&poolTicker='+spo['Ticker']+'&startEpoch='+ip['StartEpoch']+'&endEpoch='+ip['EndEpoch'],{cache:"reload"});
     let result = await response.text();
     if(result == "New record created successfully"){
-      response = await fetch("https://adalink.io/api/get-affiliate-subscribed-ip-list.php?aID="+accountInfo['UniqueID'],{cache:"reload"});
+      response = await fetch("/api/get-affiliate-subscribed-ip-list.php?aID="+accountInfo['UniqueID'],{cache:"reload"});
       let importantIPsList = JSON.parse(await response.text());
       setImportantIPsList(importantIPsList);
       setMessageWindowContent(<><div style={{textAlign:"left"}}>Successfully subscribed to program.</div><div style={{textAlign:"left"}}>Link is copied to clipboard. You can always find the link from your profile page.</div></>);

@@ -80,7 +80,7 @@ function SPOs({ipsList,selectedSPOID}) {
     const intervalId = setInterval(() => {
       // This code will run every 10 seconds
       //In developmenet it is set to 10hrs
-      fetch('https://adalink.io/api/get-spos-list.php',{cache:'reload'})
+      fetch('/api/get-spos-list.php',{cache:'reload'})
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

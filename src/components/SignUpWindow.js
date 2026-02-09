@@ -118,7 +118,7 @@ const SignUpWindow = ({ walletAPI,walletName,walletIcon,lucid,openWalletMenu,onC
 
     //setBufferWindowMessage("Creating account...");
     
-    let url="https://adalink.io/api/create-new-account.php";
+    let url="/api/create-new-account.php";
     let queryResponse = await fetch(url, {
         method: 'POST', 
         mode: 'cors', 
@@ -134,7 +134,7 @@ const SignUpWindow = ({ walletAPI,walletName,walletIcon,lucid,openWalletMenu,onC
     //console.log(await queryResponse.text());
     
     if(queryResult==="New record created successfully"){
-      let response = await fetch('https://adalink.io/api/get-account-info.php?stakeAddress='+stakeAddress,{cache:'reload'}); 
+      let response = await fetch('/api/get-account-info.php?stakeAddress='+stakeAddress,{cache:'reload'}); 
       let accountInfo = JSON.parse(await response.text());
       setAccountInfo(accountInfo);
       setLoggedIn(true);
@@ -158,7 +158,7 @@ const SignUpWindow = ({ walletAPI,walletName,walletIcon,lucid,openWalletMenu,onC
   async function isAccountRegistered(userType,checkWith,checkValue){
         
     let response, accountInfo;
-    response = await fetch('https://adalink.io/api/is-account-registered.php?userType='+userType+'&'+checkWith+'='+checkValue); 
+    response = await fetch('/api/is-account-registered.php?userType='+userType+'&'+checkWith+'='+checkValue); 
     accountInfo = JSON.parse(await response.text());
     
     if(accountInfo=="-1"){
